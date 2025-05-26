@@ -124,6 +124,7 @@
     </label>
 
     <button type="submit">Preview</button>
+    <button type="button" id="clearFormBtn" style="margin-left: 10px;">Clear form</button>
   </form>
 
   <script>
@@ -133,6 +134,7 @@
     const incrementBtn = document.getElementById('incrementInvoice');
     const decrementBtn = document.getElementById('decrementInvoice');
     const expensesInput = document.getElementById('expenses');
+    const clearFormBtn = document.getElementById('clearFormBtn');
 
     // Load stored data and populate form if exists
     function loadFormData() {
@@ -163,18 +165,16 @@
         }
         localStorage.setItem('invoiceFormData', JSON.stringify(data));
       } else {
+        // When unchecked, only remove saved data, do NOT reset form
         localStorage.removeItem('invoiceFormData');
-        form.reset();
-        expensesInput.value = '0';  // keep expenses reset to 0
       }
     }
 
-    // Watch save info checkbox toggle
+    // Watch save info checkbox toggle - only clear saved data, not form
     saveInfoCheckbox.addEventListener('change', () => {
       if (!saveInfoCheckbox.checked) {
         localStorage.removeItem('invoiceFormData');
-        form.reset();
-        expensesInput.value = '0';
+        // Do NOT reset form here
       } else {
         saveFormData();
       }
@@ -211,10 +211,17 @@
         }
       }
       sessionStorage.setItem('invoicePreview', JSON.stringify(data));
-      console.log('Saved to sessionStorage:', sessionStorage.getItem('invoicePreview'));
 
       // Redirect to preview page
       window.location.href = 'preview.html';
+    });
+
+    // Clear form button handler
+    clearFormBtn.addEventListener('click', () => {
+      form.reset();
+      expensesInput.value = '0';  // Reset expenses explicitly
+      localStorage.removeItem('invoiceFormData');
+      saveInfoCheckbox.checked = false;
     });
 
     // Initialize form on page load
