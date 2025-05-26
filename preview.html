@@ -152,7 +152,7 @@
     document.getElementById("invoice").textContent = data.invoice;
     document.getElementById("date").textContent = `1 ${nextMonthName} ${year}`;
 
-    const description = `Crewing for ${data.boat}, from 1 ${nextMonthName}, ${year} to ${lastDay} ${nextMonthName}, ${year}`;
+    const description = `Crewing for ${data.boat}, from 1 ${nextMonthName}, ${year} to ${lastDay}  ${nextMonthName}, ${year}`;
     document.getElementById("description").textContent = description;
 
     const subtotal = parseFloat(data.rate) || 0;
