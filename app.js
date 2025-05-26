@@ -21,7 +21,7 @@ function printForm() {
 }
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js')
+  navigator.serviceWorker.register('/gss-inv-generator/sw.js')
     .then(() => console.log('Service Worker registered'))
     .catch(err => console.error('Service Worker registration failed:', err));
 }
