@@ -2,126 +2,218 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="manifest" href="manifest.json" />
-  <title>Invoice Generator</title>
+  <title>Invoice Form</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    input, select { display: block; margin-bottom: 10px; padding: 5px; width: 100%; max-width: 400px; }
-    label { font-weight: bold; margin-top: 10px; display: block; }
-    .switch { display: flex; align-items: center; margin-bottom: 10px; }
-    .switch input { width: auto; margin-left: 10px; }
-    button { padding: 10px 20px; margin-top: 10px; cursor: pointer; }
-    .hidden { display: none; }
-    .number-control { display: flex; gap: 10px; align-items: center; }
-    .number-control button { padding: 5px 10px; }
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+    label { display: block; margin-top: 10px; }
+    input, select {
+      width: 100%;
+      padding: 6px;
+      box-sizing: border-box;
+      margin-top: 4px;
+    }
+    .inline-group {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 10px;
+    }
+    .inline-group input[type="number"] {
+      width: auto;
+      flex-grow: 1;
+    }
+    .checkbox-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 15px;
+      margin-bottom: 15px;
+      user-select: none;
+      cursor: pointer;
+      width: 100%;
+      max-width: 100%;
+      white-space: nowrap;
+    }
+    .checkbox-label input[type="checkbox"] {
+      margin: 0;
+    }
+    button {
+      padding: 6px 12px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+    button:focus {
+      outline: 2px solid #007BFF;
+      outline-offset: 2px;
+    }
   </style>
 </head>
 <body>
-  <h1>Invoice Information</h1>
-  <form id="invoice-form">
-    <label>Name <input type="text" name="name" required></label>
-    <label>Address Line 1 <input type="text" name="address1" required></label>
-    <label>Address Line 2 <input type="text" name="address2"></label>
-    <label>Country
-      <select name="country" required>
-        <option value="">Select Country</option>
-        <option value="United States">United States</option>
-        <option value="United Kingdom">United Kingdom</option>
-        <option value="Canada">Canada</option>
-        <option value="Germany">Germany</option>
-        <option value="France">France</option>
-        <option value="Norway">Norway</option>
-        <option value="Sweden">Sweden</option>
-        <option value="Australia">Australia</option>
-        <option value="New Zealand">New Zealand</option>
-        <!-- Add more countries as needed -->
-      </select>
-    </label>
-    <label>Phone Number <input type="tel" name="phone" required></label>
-    <label>Email <input type="email" name="email" required></label>
-    <label>Rate (EUR) <input type="number" name="rate" required></label>
-    <label>Invoice Number</label>
-    <div class="number-control">
-      <button type="button" onclick="adjustInvoice(-1)">-</button>
-      <input type="text" name="invoice" id="invoice" required />
-      <button type="button" onclick="adjustInvoice(1)">+</button>
-    </div>
-    <label>Which Boat
-      <select name="boat">
-        <option value="AMUNDSEN">AMUNDSEN</option>
-        <option value="VINSON OF ANTARCTICA">VINSON OF ANTARCTICA</option>
-      </select>
-    </label>
-    <label>IBAN <input type="text" name="iban" required></label>
-    <label>Swift <input type="text" name="swift" required></label>
-    <label>Bank Name <input type="text" name="bankName" required></label>
-    <label>Bank Address <input type="text" name="bankAddress" required></label>
-    <label>Upload Signature <input type="file" accept="image/*" name="signature" required></label>
+  <h1>Invoice Form</h1>
+  <form id="invoiceForm">
+    <label for="name">Name:</label>
+    <input id="name" name="name" type="text" required />
 
-    <div class="switch">
-      <label for="saveInfo">Save information for next time</label>
-      <input type="checkbox" id="saveInfo" name="saveInfo">
+    <label for="address1">Address Line 1:</label>
+    <input id="address1" name="address1" type="text" required />
+
+    <label for="address2">Address Line 2:</label>
+    <input id="address2" name="address2" type="text" />
+
+    <label for="country">Country:</label>
+    <select id="country" name="country" required>
+      <option value="">-- Select Country --</option>
+      <option>United States</option>
+      <option>United Kingdom</option>
+      <option>Canada</option>
+      <option>Germany</option>
+      <option>France</option>
+      <option>Norway</option>
+      <option>Australia</option>
+      <option>Japan</option>
+      <!-- Add more countries as needed -->
+    </select>
+
+    <label for="phone">Phone Number:</label>
+    <input id="phone" name="phone" type="tel" />
+
+    <label for="email">Email:</label>
+    <input id="email" name="email" type="email" />
+
+    <label for="rate">Rate (€):</label>
+    <input id="rate" name="rate" type="number" min="0" step="0.01" required />
+
+    <label for="invoice">Invoice Number:</label>
+    <div class="inline-group" aria-label="Invoice number control">
+      <button type="button" id="decrementInvoice" aria-label="Decrease invoice number">-</button>
+      <input id="invoice" name="invoice" type="number" min="0" required aria-live="polite" />
+      <button type="button" id="incrementInvoice" aria-label="Increase invoice number">+</button>
     </div>
+
+    <label for="boat">Which Boat:</label>
+    <select id="boat" name="boat" required>
+      <option value="">-- Select Boat --</option>
+      <option>AMUNDSEN</option>
+      <option>VINSON OF ANTARCTICA</option>
+    </select>
+
+    <label for="iban">IBAN:</label>
+    <input id="iban" name="iban" type="text" />
+
+    <label for="swift">Swift/BIC:</label>
+    <input id="swift" name="swift" type="text" />
+
+    <label for="bankName">Bank Name:</label>
+    <input id="bankName" name="bankName" type="text" />
+
+    <label for="bankAddress">Bank Address:</label>
+    <input id="bankAddress" name="bankAddress" type="text" />
+
+    <label for="expenses">Total expenses (€):</label>
+    <input id="expenses" name="expenses" type="number" min="0" step="0.01" />
+
+    <label class="checkbox-label" for="saveInfo">
+      Save information for next time
+      <input type="checkbox" id="saveInfo" />
+    </label>
 
     <button type="submit">Preview</button>
-    <button type="button" onclick="clearSavedData()">Clear Saved Info</button>
   </form>
 
   <script>
-    const form = document.getElementById('invoice-form');
+    const form = document.getElementById('invoiceForm');
+    const saveInfoCheckbox = document.getElementById('saveInfo');
+    const invoiceInput = document.getElementById('invoice');
+    const incrementBtn = document.getElementById('incrementInvoice');
+    const decrementBtn = document.getElementById('decrementInvoice');
+    const expensesInput = document.getElementById('expenses');
 
-    // Load saved data
-    window.onload = () => {
-      const saved = localStorage.getItem('invoiceData');
+    // Load stored data and populate form if exists
+    function loadFormData() {
+      const saved = localStorage.getItem('invoiceFormData');
       if (saved) {
         const data = JSON.parse(saved);
-        for (let key in data) {
-          if (form.elements[key]) form.elements[key].value = data[key];
+        for (const key in data) {
+          if (form.elements[key]) {
+            form.elements[key].value = data[key];
+          }
+        }
+        saveInfoCheckbox.checked = true;
+      } else {
+        // No saved data: set default expenses to 0 and checkbox unchecked
+        expensesInput.value = '0';
+        saveInfoCheckbox.checked = false;
+      }
+    }
+
+    // Save form data to localStorage
+    function saveFormData() {
+      if (saveInfoCheckbox.checked) {
+        const data = {};
+        for (const element of form.elements) {
+          if (element.name) {
+            data[element.name] = element.value;
+          }
+        }
+        localStorage.setItem('invoiceFormData', JSON.stringify(data));
+      } else {
+        localStorage.removeItem('invoiceFormData');
+        form.reset();
+        expensesInput.value = '0';  // keep expenses reset to 0
+      }
+    }
+
+    // Watch save info checkbox toggle
+    saveInfoCheckbox.addEventListener('change', () => {
+      if (!saveInfoCheckbox.checked) {
+        localStorage.removeItem('invoiceFormData');
+        form.reset();
+        expensesInput.value = '0';
+      } else {
+        saveFormData();
+      }
+    });
+
+    // Increment and decrement invoice number buttons
+    incrementBtn.addEventListener('click', () => {
+      invoiceInput.value = (parseInt(invoiceInput.value) || 0) + 1;
+      if (saveInfoCheckbox.checked) saveFormData();
+    });
+
+    decrementBtn.addEventListener('click', () => {
+      invoiceInput.value = Math.max((parseInt(invoiceInput.value) || 0) - 1, 0);
+      if (saveInfoCheckbox.checked) saveFormData();
+    });
+
+    // Save form data on input changes (only if saveInfo checked)
+    form.addEventListener('input', () => {
+      if (saveInfoCheckbox.checked) {
+        saveFormData();
+      }
+    });
+
+    // On submit, save data and go to preview page
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      saveFormData();
+
+      // Prepare data for preview page
+      const data = {};
+      for (const element of form.elements) {
+        if (element.name) {
+          data[element.name] = element.value;
         }
       }
-    };
+      sessionStorage.setItem('invoicePreview', JSON.stringify(data));
 
-    form.onsubmit = async (e) => {
-      e.preventDefault();
-      const formData = new FormData(form);
-      const data = Object.fromEntries(formData.entries());
+      // Redirect to preview page
+      window.location.href = 'preview.html';
+    });
 
-      // Convert file to Data URL
-      const file = formData.get("signature");
-      const signatureData = file ? await toBase64(file) : "";
-      data.signature = signatureData;
-
-      if (form.saveInfo.checked) {
-        localStorage.setItem("invoiceData", JSON.stringify(data));
-      }
-
-      sessionStorage.setItem("invoicePreview", JSON.stringify(data));
-      window.location.href = "preview.html";
-    };
-
-    function toBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
-      });
-    }
-
-    function adjustInvoice(delta) {
-      const input = document.getElementById('invoice');
-      const val = parseInt(input.value, 10);
-      if (!isNaN(val)) {
-        input.value = val + delta;
-      }
-    }
-
-    function clearSavedData() {
-      localStorage.removeItem('invoiceData');
-      form.reset();
-      alert('Saved information cleared and form reset.');
-    }
+    // Initialize form on page load
+    window.addEventListener('DOMContentLoaded', loadFormData);
   </script>
 </body>
 </html>
