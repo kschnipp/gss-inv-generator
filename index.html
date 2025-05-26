@@ -2,35 +2,125 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="theme-color" content="#317EFB"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="manifest" href="manifest.json" />
-  <link rel="stylesheet" href="style.css" />
-  <title>Offline Form App</title>
+  <title>Invoice Generator</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    input, select { display: block; margin-bottom: 10px; padding: 5px; width: 100%; max-width: 400px; }
+    label { font-weight: bold; margin-top: 10px; display: block; }
+    .switch { display: flex; align-items: center; margin-bottom: 10px; }
+    .switch input { width: auto; margin-left: 10px; }
+    button { padding: 10px 20px; margin-top: 10px; cursor: pointer; }
+    .hidden { display: none; }
+    .number-control { display: flex; gap: 10px; align-items: center; }
+    .number-control button { padding: 5px 10px; }
+  </style>
 </head>
 <body>
-  <h1>Offline Form</h1>
-  <form id="dataForm">
-    <label>
-      Name: <input type="text" name="name" id="name">
-    </label><br>
-    <label>
-      Email: <input type="email" name="email" id="email">
-    </label><br>
-    <label>
-      Notes: <textarea name="notes" id="notes"></textarea>
-    </label><br>
-    <button type="button" onclick="saveForm()">Save</button>
-    <button type="button" onclick="printForm()">Print to PDF</button>
+  <h1>Invoice Information</h1>
+  <form id="invoice-form">
+    <label>Name <input type="text" name="name" required></label>
+    <label>Address Line 1 <input type="text" name="address1" required></label>
+    <label>Address Line 2 <input type="text" name="address2"></label>
+    <label>Country
+      <select name="country" required>
+        <option value="">Select Country</option>
+        <option value="United States">United States</option>
+        <option value="United Kingdom">United Kingdom</option>
+        <option value="Canada">Canada</option>
+        <option value="Germany">Germany</option>
+        <option value="France">France</option>
+        <option value="Norway">Norway</option>
+        <option value="Sweden">Sweden</option>
+        <option value="Australia">Australia</option>
+        <option value="New Zealand">New Zealand</option>
+        <!-- Add more countries as needed -->
+      </select>
+    </label>
+    <label>Phone Number <input type="tel" name="phone" required></label>
+    <label>Email <input type="email" name="email" required></label>
+    <label>Rate (EUR) <input type="number" name="rate" required></label>
+    <label>Invoice Number</label>
+    <div class="number-control">
+      <button type="button" onclick="adjustInvoice(-1)">-</button>
+      <input type="text" name="invoice" id="invoice" required />
+      <button type="button" onclick="adjustInvoice(1)">+</button>
+    </div>
+    <label>Which Boat
+      <select name="boat">
+        <option value="AMUNDSEN">AMUNDSEN</option>
+        <option value="VINSON OF ANTARCTICA">VINSON OF ANTARCTICA</option>
+      </select>
+    </label>
+    <label>IBAN <input type="text" name="iban" required></label>
+    <label>Swift <input type="text" name="swift" required></label>
+    <label>Bank Name <input type="text" name="bankName" required></label>
+    <label>Bank Address <input type="text" name="bankAddress" required></label>
+    <label>Upload Signature <input type="file" accept="image/*" name="signature" required></label>
+
+    <div class="switch">
+      <label for="saveInfo">Save information for next time</label>
+      <input type="checkbox" id="saveInfo" name="saveInfo">
+    </div>
+
+    <button type="submit">Preview</button>
+    <button type="button" onclick="clearSavedData()">Clear Saved Info</button>
   </form>
 
-  <script src="app.js"></script>
   <script>
-    // Register service worker
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('service-worker.js');
+    const form = document.getElementById('invoice-form');
+
+    // Load saved data
+    window.onload = () => {
+      const saved = localStorage.getItem('invoiceData');
+      if (saved) {
+        const data = JSON.parse(saved);
+        for (let key in data) {
+          if (form.elements[key]) form.elements[key].value = data[key];
+        }
+      }
+    };
+
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      // Convert file to Data URL
+      const file = formData.get("signature");
+      const signatureData = file ? await toBase64(file) : "";
+      data.signature = signatureData;
+
+      if (form.saveInfo.checked) {
+        localStorage.setItem("invoiceData", JSON.stringify(data));
+      }
+
+      sessionStorage.setItem("invoicePreview", JSON.stringify(data));
+      window.location.href = "preview.html";
+    };
+
+    function toBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
       });
+    }
+
+    function adjustInvoice(delta) {
+      const input = document.getElementById('invoice');
+      const val = parseInt(input.value, 10);
+      if (!isNaN(val)) {
+        input.value = val + delta;
+      }
+    }
+
+    function clearSavedData() {
+      localStorage.removeItem('invoiceData');
+      form.reset();
+      alert('Saved information cleared and form reset.');
     }
   </script>
 </body>
