@@ -211,6 +211,7 @@
         }
       }
       sessionStorage.setItem('invoicePreview', JSON.stringify(data));
+      console.log('Saved to sessionStorage:', sessionStorage.getItem('invoicePreview'));
 
       // Redirect to preview page
       window.location.href = 'preview.html';
