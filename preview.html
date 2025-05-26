@@ -130,7 +130,35 @@
   <p id="banking"></p>
 
   <script>
-    const data = JSON.parse(sessionStorage.getItem("invoicePreview"));
+
+  let data = null;
+
+    // Try sessionStorage
+    try {
+     const sessionData = sessionStorage.getItem("invoicePreview");
+     if (sessionData) {
+       data = JSON.parse(sessionData);
+     }
+    } catch (e) {}
+
+    // Try localStorage fallback
+    if (!data) {
+     try {
+       const localData = localStorage.getItem("invoiceFormData");
+       if (localData) {
+         data = JSON.parse(localData);
+       }
+     } catch (e) {}
+    }
+
+    // If still no data, try query string fallback
+    if (!data) {
+     const params = new URLSearchParams(window.location.search);
+     data = {};
+     for (const [key, value] of params.entries()) {
+       data[key] = decodeURIComponent(value);
+     }
+    }
 
     const today = new Date();
     const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
