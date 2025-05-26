@@ -204,5 +204,19 @@
       Bank Address: ${data.bankAddress}
     `;
   </script>
+  <script>
+  // Function to detect mobile devices (basic)
+  function isMobile() {
+    return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  }
+
+  window.addEventListener('load', () => {
+    if (isMobile()) {
+      if (confirm("Do you want to save this invoice as a PDF?")) {
+        window.print();
+      }
+    }
+  });
+</script>
 </body>
 </html>
