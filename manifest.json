@@ -1,6 +1,6 @@
 {
   "name": "GSS Invoice Generator",
-  "short_name": "InvGen",
+  "short_name": "GSS Invoice Generator",
   "start_url": "/gss-inv-generator/index.html",
   "display": "standalone",
   "background_color": "#ffffff",
