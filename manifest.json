@@ -1,6 +1,6 @@
 {
-  "name": "Offline Form App",
-  "short_name": "FormApp",
+  "name": "GSS Invoice Generator",
+  "short_name": "InvGen",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
