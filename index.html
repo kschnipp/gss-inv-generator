@@ -77,7 +77,6 @@
       <option>Spain</option>
       <option>United Kingdom</option>
       <option>United States</option>
-      <!-- Add more countries as needed -->
     </select>
 
     <label for="phone">Phone Number:</label>
@@ -101,6 +100,15 @@
       <option value="">-- Select Boat --</option>
       <option>AMUNDSEN</option>
       <option>VINSON OF ANTARCTICA</option>
+    </select>
+
+    <!-- ✅ New Role field added here -->
+    <label for="role">Role:</label>
+    <select id="role" name="role" required>
+      <option value="">-- Select Role --</option>
+      <option>Skipper</option>
+      <option>Mate</option>
+      <option>Deckhand</option>
     </select>
 
     <label for="iban">IBAN:</label>
@@ -136,7 +144,6 @@
     const expensesInput = document.getElementById('expenses');
     const clearFormBtn = document.getElementById('clearFormBtn');
 
-    // Load stored data and populate form if exists
     function loadFormData() {
       const saved = localStorage.getItem('invoiceFormData');
       if (saved) {
@@ -148,13 +155,11 @@
         }
         saveInfoCheckbox.checked = true;
       } else {
-        // No saved data: set default expenses to 0 and checkbox unchecked
         expensesInput.value = '0';
         saveInfoCheckbox.checked = false;
       }
     }
 
-    // Save form data to localStorage
     function saveFormData() {
       if (saveInfoCheckbox.checked) {
         const data = {};
@@ -165,22 +170,18 @@
         }
         localStorage.setItem('invoiceFormData', JSON.stringify(data));
       } else {
-        // When unchecked, only remove saved data, do NOT reset form
         localStorage.removeItem('invoiceFormData');
       }
     }
 
-    // Watch save info checkbox toggle - only clear saved data, not form
     saveInfoCheckbox.addEventListener('change', () => {
       if (!saveInfoCheckbox.checked) {
         localStorage.removeItem('invoiceFormData');
-        // Do NOT reset form here
       } else {
         saveFormData();
       }
     });
 
-    // Increment and decrement invoice number buttons
     incrementBtn.addEventListener('click', () => {
       invoiceInput.value = (parseInt(invoiceInput.value) || 0) + 1;
       if (saveInfoCheckbox.checked) saveFormData();
@@ -191,19 +192,15 @@
       if (saveInfoCheckbox.checked) saveFormData();
     });
 
-    // Save form data on input changes (only if saveInfo checked)
     form.addEventListener('input', () => {
       if (saveInfoCheckbox.checked) {
         saveFormData();
       }
     });
 
-    // On submit, save data and go to preview page
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       saveFormData();
-
-      // Prepare data for preview page
       const data = {};
       for (const element of form.elements) {
         if (element.name) {
@@ -211,20 +208,16 @@
         }
       }
       sessionStorage.setItem('invoicePreview', JSON.stringify(data));
-
-      // Redirect to preview page
       window.location.href = 'preview.html';
     });
 
-    // Clear form button handler
     clearFormBtn.addEventListener('click', () => {
       form.reset();
-      expensesInput.value = '0';  // Reset expenses explicitly
+      expensesInput.value = '0';
       localStorage.removeItem('invoiceFormData');
       saveInfoCheckbox.checked = false;
     });
 
-    // Initialize form on page load
     window.addEventListener('DOMContentLoaded', loadFormData);
   </script>
 </body>
